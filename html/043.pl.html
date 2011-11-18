@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>043.pl</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "042.pl" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "044.pl" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>
+
+
+
+    # exclude the ones that haven't been modified 
+    # after the beginning of the target day
+    my ($mtime) = (stat(&quot;$_/$file&quot;))[9];
+    next if ( $mtime &lt; $start_time ); 
+    
+    # save the last-modified time 
+    # so that we can sort the files
+    $log_files{&quot;$_/$file&quot;} = $mtime;
+
+
+
+
+
+
+</pre>
+</body>

@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>040</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "039" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "041.pl" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>
+
+     e.g.
+     
+        logcat \
+            --log_name_re=&quot;access_log&quot; \
+            --start_time=&quot;10 minutes ago&quot; \
+            --end_time=&quot;now&quot;
+     
+        logcat \
+            --log_name_re=&quot;myapp&quot; \
+            --relative_time=&quot;3 days ago&quot;
+            --start_time=&quot;start of today&quot; \
+            --end_time=&quot;end of today&quot; \
+
+
+
+
+</pre>
+</body>

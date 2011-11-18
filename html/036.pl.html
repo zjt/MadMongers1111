@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>036.pl</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "035.pl" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "037.pl" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>
+
+
+    $seconds = parsedate(&quot;Mon Jan  2 04:24:27 1995&quot;);
+    $seconds = parsedate(&quot;Tue Apr 4 00:22:12 PDT 1995&quot;);
+    $seconds = parsedate(&quot;04.04.95 00:22&quot;, ZONE =&gt; PDT);
+    $seconds = parsedate(&quot;Jan 1 1999 11:23:34.578&quot;, SUBSECOND =&gt; 1);
+    $seconds = parsedate(&quot;122212 950404&quot;, ZONE =&gt; PDT, TIMEFIRST =&gt; 1);
+    $seconds = parsedate(&quot;+3 secs&quot;, NOW =&gt; 796978800);
+    $seconds = parsedate(&quot;2 months&quot;, NOW =&gt; 796720932);
+    $seconds = parsedate(&quot;last Tuesday&quot;);
+    ($seconds, $remaining) = parsedate(&quot;today is the day&quot;);
+    ($seconds, $error) = parsedate(&quot;today is&quot;, WHOLE=&gt;1);
+
+
+
+
+
+</pre>
+</body>

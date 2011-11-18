@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+# regex is the first argument
+#
+# if there are more arguments, then it will treat them as files to read
+#    e.g. plgrep foo myfile.txt
+#
+# otherwise it reads from STDIN
+#    e.g. cat myfile.txt | plgrep foo
+
+my $pattern = shift @ARGV;
+while ( my $line = <> ) {
+    if ( my @matched = $line =~ $pattern ) {
+
+        # there were captures in the regex
+        # so display what was captured
+        if ( scalar @matched and $matched[0] ne '1' ) {
+            print join(' ', @matched), "\n";
+        }
+
+        # otherwise the regex just matched on a line
+        # so display the whole line
+        else {
+            print $line;
+        }
+    }
+}

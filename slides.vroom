@@ -1,0 +1,642 @@
+# This is a sample Vroom input file. It should help you get started.
+#
+# Edit this file with your content. Then run `vroom --vroom` to start
+# the show!
+#
+# See `perldoc Vroom` for complete details.
+#
+---- config
+# Basic config options.
+title: Perl sysadmin stuff (Jesse Thompson)
+indent: 5
+height: 18 
+width: 20
+#auto_size: 1
+skip: 0
+
+# The following options are for Gvim usage.
+# vim: gvim
+# gvimrc: |
+#   set fuopt=maxhorz,maxvert
+#   set guioptions=egmLtT
+#   set guifont=Bitstream_Vera_Sans_Mono:h18
+#   set guicursor=a:blinkon0-ver25-Cursor
+#   colorscheme default
+
+----
+Jesse Thompson
+UW Madison
+Division of Information Technology
+
+(Email, Calendar, Chat, Subversion, ...)
+----
+Perl!
+
+sysadminy stuff...
+----
+something I've just started using...
+----
+Compile Perl with: -Duserelocatableinc
+
+Use Relocatable INC
+
+Allows you to move perl to another directory.
+---- 
+How to do it?
+
+> ./Configure \
+    -Dprefix=/opt/perl-5.14.2 \
+    -des \
+    -Duserelocatableinc 
+
+> # install some cpan modules...
+
+> sudo mv /opt/perl-5.14.2 \
+          /opt/perl-5.14.2-WithMyAppDeps-YYMMDD
+----
+
+1. in dev:  build base perl,
+            install your module dependencies
+            rename it to something unique
+            tarball the whole smash
+
+2. in test: unpack tarball 
+            configure app to use new perl path
+            test/QA your app
+
+3. in prod: unpack tarball
+            configure app to use new perl path
+----
+Easy backout failed upgrades...
+
+   App uses: #!/opt/perl/bin/perl
+
+   # upgrade perl and dependencies
+
+   > ln -s /opt/perl-5.14.2-20111108 /opt/perl
+
+   # OH NO!  everything is broken!
+
+   > ln -s /opt/perl-5.14.2-20110421 /opt/perl
+
+   # WHEW
+----
+IN PRODUCTION:
+
+Stay away from 
+installing modules directly from CPAN
+
+
+  What if CPAN modules change 
+  (and break your app)
+  between dev -> test -> prod 
+----
+Other advantages:
+
+  No need for local::lib, fatpack, PAR
+              and other workarounds.  
+    * Just install CPAN modules normally.
+
+  Easily back out to older rev.  
+    * Just change the perl that your app uses.
+
+  Production deployments are done at off-hours 
+  when you are likely to make a mistake.
+----
+Problems
+
+  Some executables installed via ExtUtils::MakeMaker 
+  will have the wrong #!perl path 
+
+  Maybe others too, but I haven't found them yet.
+----
+new topic
+----
+instead of grep and cut (and awk and sed and ...)
+
+     USE PERL :-)
+----
+grep is handy
+but its matching capabilities suck
+
+
+egrep?
+getting there... 
+but still not as good as perl regex
+---- perl,i4
+> cat file | perl -pe 's/.* IPADDR=(.*?) .*/$1/g'
+209.85.225.99
+209.85.225.105
+209.85.225.147
+
+# I can't ever remember how to do things 
+# like that using shell tools
+# I have to look it up every time
+----
+command line perl is very handy
+
+not going to go into it all
+
+just think of perl whenever you need
+to do any fancy shell scripting
+
+I always end up rewriting all of my
+shell script into perl eventually
+after they get too complex
+----
+grepl
+
+    A handy script that works like grep
+    but gives you the power of perl regex
+
+SEE ALSO 
+
+    perldoc perlretut
+---- perl,i4
+#!/usr/bin/perl
+
+# regex is the first argument
+#
+# if there are more arguments, 
+# then it will treat them as files to read
+#    e.g. grepl foo myfile.txt
+#
+# otherwise it reads from STDIN
+#    e.g. cat myfile.txt | grepl foo
+
+my $pattern = shift @ARGV;
+while ( my $line = <> ) {
+    # ...
+}
+---- perl,i4
+  if ( my @matched = $line =~ m{$pattern} ) {
+
+    # there were captures in the regex
+    # so display what was captured
+    if ( scalar @matched and $matched[0] ne '1' ) {
+      print join(' ', @matched), "\n";
+    }
+
+    # otherwise the regex just matched on a line
+    # so display the whole line
+    else {
+      print $line;
+    }
+  }
+---- perl,i4
+#
+
+
+
+
+# for example:
+
+# grepl murder slipsum.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# (ignore this)
+print `echo "> cat slipsum.txt;\n"; cat slipsum.txt; echo "\n> grepl murder slipsum.txt\n"; ./grepl murder slipsum.txt`;
+---- perl,i4
+#
+
+
+
+
+# for example:
+
+# cat slipsum.txt | grepl ice
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# (ignore this)
+print `echo "> cat slipsum.txt;\n"; cat slipsum.txt; echo "\n> cat slipsum.txt | grepl ice\n"; cat slipsum.txt | ./grepl ice`;
+---- perl,i4
+#
+
+
+
+
+# for example:
+
+# grepl "(\w+) made it out" slipsum.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# (ignore this)
+print `echo "> cat slipsum.txt;\n"; cat slipsum.txt; echo "\n> grepl \\"\(\\w+\) made it out\\" slipsum.txt\n" ;./grepl \" (\\w+) made it out\" slipsum.txt`;
+---- perl,i4
+#
+
+
+
+
+# for example:
+
+# grepl "(\w+) made it (out)" slipsum.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# (ignore this)
+print `echo "> cat slipsum.txt;\n"; cat slipsum.txt; echo "\n> grepl \\"\(\\w+\) made it \(out\)\\" slipsum.txt\n" ;./grepl \" (\\w+) made it (out)\" slipsum.txt`;
+----
+etc
+----
+new topic
+----
+overwrite a file using:
+
+    sysopen()
+    flock()
+    seek()
+    truncate()
+    tell()
+----
+fcntl 
+
+    C library
+
+    for manipulating file descriptors
+---- perl,i4
+use Fcntl qw(:DEFAULT :flock);
+
+# open file for reading and writing
+# and create it if needed 
+sysopen( my $fh, $file, O_RDWR|O_CREAT ) 
+    or die "can't open! $!";
+
+# lock the file 
+# so that other instances of this script will die
+flock( $fh, LOCK_EX ) 
+    or die "can't lock! $!";
+---- perl,i4
+# seek to the beginning of the file
+seek( $fh, 0, 0);
+
+# print some data
+print $fh "blah blah blah";
+
+# truncate the file 
+# to where we stopped writing
+truncate( $fh, tell($fh) );
+
+# close releases the lock
+close( $fh );
+----
+another example!
+----
+example: cat a log file starting at last position
+
+    memtail
+----
+something a bit more complex...
+----
+logcat
+----
+Specify a time interval,
+using both relative and absolute times,
+and common language...
+to display log lines, 
+within that interval,
+from multiple files,
+in order,
+efficiently
+----
+what does logcat use?
+
+   Time::ParseDate
+   File::SortedSeek
+---- perl
+Time::ParseDate
+
+   Recognizes any date and time format, 
+   absolute or relative
+---- perl,i4
+$seconds = parsedate("Mon Jan  2 04:24:27 1995");
+$seconds = parsedate("Tue Apr 4 00:22:12 PDT 1995");
+$seconds = parsedate("04.04.95 00:22", ZONE => PDT);
+$seconds = parsedate("Jan 1 1999 11:23:34.578", SUBSECOND => 1);
+$seconds = parsedate("122212 950404", ZONE => PDT, TIMEFIRST => 1);
+$seconds = parsedate("+3 secs", NOW => 796978800);
+$seconds = parsedate("2 months", NOW => 796720932);
+$seconds = parsedate("last Tuesday");
+($seconds, $remaining) = parsedate("today is the day");
+($seconds, $error) = parsedate("today is", WHOLE=>1);
+---- perl
+File::SortedSeek
+
+   fast access to large files
+---- perl,i4
+  use File::SortedSeek ':all';
+  open BIG, $file or die $!;
+
+  # find a number or the first number greater 
+  # in a file (ascending order)
+  $tell = numeric( *BIG, $number );
+
+  # optional argument is a reference 
+  # to a subroutine to munge the file lines 
+  # so that suitable values are extracted 
+  # for comparison to $find
+  $tell = numeric( *BIG, $find, \&munge_line );
+----
+how does logcat work?
+----
+e.g.
+
+   logcat \
+       --log_name_re="access_log" \
+       --start_time="10 minutes ago" \
+       --end_time="now"
+
+   logcat \
+       --log_name_re="myapp" \
+       --relative_time="3 days ago"
+       --start_time="start of today" \
+       --end_time="end of today" \
+---- perl,i4
+# setup
+
+my $relative_time = parsedate($args{relative_time});
+
+
+my $start_time    = parsedate($args{start_time}, 
+                              NOW => $relative_time);
+
+
+my $end_time      = parsedate($args{end_time},   
+                              NOW => $relative_time);
+---- perl,i4
+# get the log files that match the specified name
+# and have been modified sometime in the time window
+
+for ( @log_dirs ) {
+
+  opendir my $logdir, $_;
+
+  for my $file ( 
+
+    grep m/$args{log_name_re}/i, readdir $logdir 
+
+  ) {
+
+       ...
+---- perl,i4
+
+# exclude the ones that haven't been modified 
+# after the beginning of the target day
+my ($mtime) = (stat("$_/$file"))[9];
+next if ( $mtime < $start_time ); 
+
+# save the last-modified time 
+# so that we can sort the files
+$log_files{"$_/$file"} = $mtime;
+---- perl,i4
+# sort the log files 
+# so that they are printed in chronological order
+
+return sort { 
+    $log_files{$a} <=> $log_files{$b} 
+} keys %log_files;
+---- perl,i4
+# open each log file
+
+for my $logfile ( @log_files ) {
+  open my $fh, $logfile;
+
+---- perl,i4
+# find the first line at or after the start time
+
+File::SortedSeek::numeric( 
+  $fh, 
+  $start_time, 
+  sub { parse_log_time($_) } 
+);
+
+my $start_point = tell($fh);
+
+my $start_line  = <$fh>;
+---- perl,i4
+# make sure that log lines were found...
+
+if ( ! $start_line 
+       or 
+     parse_log_time($start_line) > $end_time 
+) {
+  # no lines in this file
+  next;
+}
+---- perl,i4
+# find the last line
+
+File::SortedSeek::numeric( 
+  $fh, 
+  $end_time, 
+  sub { parse_log_time($_) }
+);
+
+my $end_point = tell($fh);
+
+my $end_line = <$fh>;
+---- perl,i4
+# seek to the start line
+
+seek($fh, $start_point, 0);
+
+# print all lines 
+while ( my $line = <$fh> ) {
+   print $line;
+   ...
+
+   # until we reach the end ...
+   last if ( tell($fh) >= $end_point );
+----
+so, what is parse_log_time()???
+
+Time::ParseDate is smart, 
+but you need to help it out
+
+you need to parse out the date/time information 
+
+this is kind of a kludge...
+---- perl,i4
+# Time::ParseDate gives it the line to parse
+# we need to return just the date/time info
+
+sub parse_log_time {
+  my $line = shift;
+  chomp($line);
+  my $munged;
+
+---- perl,i4
+# UGH, this is too manual
+# because there are so many date/time formats
+
+# 20-Aug-2009 11:03:52.12
+if ( $line =~ /^(\d+\-\w+\-\d+\s+\d+\:\d+\:\d+\.\d+)\s/ ) {
+  $munged = $1;
+}
+
+# 216.180.217.126 - - [20/Aug/2009:11:03:52 -0500] 
+if ( $line =~ /^[\d\.]+\s+\-\s+\S+\s+\[(\d+\/\w+\/\d+\:\d+\:\d+\:\d+\s+[\-\+]\d+)\]\s/ ) {
+  $munged = $1;
+}
+# 20092008 110352
+if ( $line =~ /^(\d{4})(\d{2})(\d{2})\s(\d{2})(\d{2})(\d{2})\s/ ) {
+    $munged = "$1/$2/$3 $4:$5:$6";
+}
+# [20/Aug/2009:11:03:52 -0500]
+if ( $line =~ /^\[(\d+\/\w+\/\d+\:\d+\:\d+\:\d+\s+[\-\+]\d+)\]/ ) {
+    $munged = $1;
+}
+# 2009-08-20T11:03:52
+if ( $line =~ /^(\d+\-\d+\-\d+T\d+\:\d+\:\d+)\s+/ ) {
+    $munged = $1;
+}
+# [Thu Aug 20 11:03:52 2009]
+if ( $line =~ /^\[(\w+\s+\w+\s+\d+\s+\d+\:\d+\:\d+\s+\d+)\]\s+/ ) {
+    $munged = $1;
+}
+# Aug 20 11:03:52
+if ( $line =~ /^(\w+\s+\d+\s+\d+\:\d+:\d+)\s+/ ) {
+    $munged = $1;
+}
+# =INFO REPORT==== 2009-08-20 11:03:52 ===
+if ( $line =~ /^[\=\s\w]+\s+(\d+\-\d+\-\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+    $munged = $1;
+}
+# [20-Aug-2009 11:03:52]
+if ( $line =~ /^\[(\d+\-\w+\-\d+\s+\d+\:\d+\:\d+)\]\s+/ ) {
+    $munged = $1;
+}
+# Aug 20 2009 11:03:52 
+if ( $line =~ /^(\w+\s+\d+\s+\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+    $munged = $1;
+}
+# [Wed Aug 20 11:03:52 2009] 
+if ( $line =~ /^\[(\w+\s+\w+\d+\s+\d+\:\d+\:\d+\s+\d+)\]\s+/ ) {
+    $munged = $1;
+}
+# 2010/08/16 15:16:41
+if ( $line =~ /^(\d+\/\d+\/\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+    $munged = $1;
+}
+# 2011-05-20 11:58:35
+if ( $line =~ /^(\d+\-\d+\-\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+    $munged = $1;
+}
+---- perl,i4
+# run the parsed date/time through Parse::TimeDate
+
+return parsedate($munged);
+----
+Anyone got a better way to do that part?
+----
+THE END
+----
+VROOM (Ingy döt Net)
+----
+== Slideshows in Vim
+
+* Hate using PowerPoint or HTML Slides for Talks?
++* Use Vroom!
+
++* You can write you slides in Vim...
+* ...and present them in Vim!
+
+----
+== Getting Started
+
+* Write a file called 'slides.vroom'.
+  * Do this in a new directory.
+* Run 'vroom --vroom'.
+* Voilà!
+
+----
+== Navigation
+
+* Hit <SPACE> to move forward.
+* Hit <BACKSPACE> to go backwards.
+* Hit 'Q' to quit.
+
+---- perl,i4
+# This is some Perl code.
+# Notice the syntax highlighting.
+# Run it with the <RR> vim command.
+for my $word (qw(Vroom totally rocks!)) {
+    print "$word\n";
+}
+
+----
+== Get Vroom!
+
+* http://search.cpan.org/dist/Vroom/
+* http://github.com/ingydotnet/vroom-pm/
+
+----
+== Vroom as HTML
+
+* http://ingydotnet.github.com/vroom-pm/
+
+----
+== The End

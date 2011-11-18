@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>052.pl</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "051.pl" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "053.pl" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>    # UGH, this is too manual
+    # because there are so many date/time formats
+    
+    # 20-Aug-2009 11:03:52.12
+    if ( $line =~ /^(\d+\-\w+\-\d+\s+\d+\:\d+\:\d+\.\d+)\s/ ) {
+      $munged = $1;
+    }
+    
+    # 216.180.217.126 - - [20/Aug/2009:11:03:52 -0500] 
+    if ( $line =~ /^[\d\.]+\s+\-\s+\S+\s+\[(\d+\/\w+\/\d+\:\d+\:\d+\:\d+\s+[\-\+]\d+)\]\s/ ) {
+      $munged = $1;
+    }
+    # 20092008 110352
+    if ( $line =~ /^(\d{4})(\d{2})(\d{2})\s(\d{2})(\d{2})(\d{2})\s/ ) {
+        $munged = &quot;$1/$2/$3 $4:$5:$6&quot;;
+    }
+    # [20/Aug/2009:11:03:52 -0500]
+    if ( $line =~ /^\[(\d+\/\w+\/\d+\:\d+\:\d+\:\d+\s+[\-\+]\d+)\]/ ) {
+        $munged = $1;
+    }
+    # 2009-08-20T11:03:52
+    if ( $line =~ /^(\d+\-\d+\-\d+T\d+\:\d+\:\d+)\s+/ ) {
+        $munged = $1;
+    }
+    # [Thu Aug 20 11:03:52 2009]
+    if ( $line =~ /^\[(\w+\s+\w+\s+\d+\s+\d+\:\d+\:\d+\s+\d+)\]\s+/ ) {
+        $munged = $1;
+    }
+    # Aug 20 11:03:52
+    if ( $line =~ /^(\w+\s+\d+\s+\d+\:\d+:\d+)\s+/ ) {
+        $munged = $1;
+    }
+    # =INFO REPORT==== 2009-08-20 11:03:52 ===
+    if ( $line =~ /^[\=\s\w]+\s+(\d+\-\d+\-\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+        $munged = $1;
+    }
+    # [20-Aug-2009 11:03:52]
+    if ( $line =~ /^\[(\d+\-\w+\-\d+\s+\d+\:\d+\:\d+)\]\s+/ ) {
+        $munged = $1;
+    }
+    # Aug 20 2009 11:03:52 
+    if ( $line =~ /^(\w+\s+\d+\s+\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+        $munged = $1;
+    }
+    # [Wed Aug 20 11:03:52 2009] 
+    if ( $line =~ /^\[(\w+\s+\w+\d+\s+\d+\:\d+\:\d+\s+\d+)\]\s+/ ) {
+        $munged = $1;
+    }
+    # 2010/08/16 15:16:41
+    if ( $line =~ /^(\d+\/\d+\/\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+        $munged = $1;
+    }
+    # 2011-05-20 11:58:35
+    if ( $line =~ /^(\d+\-\d+\-\d+\s+\d+\:\d+\:\d+)\s+/ ) {
+        $munged = $1;
+    }
+</pre>
+</body>

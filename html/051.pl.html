@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>051.pl</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "050" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "052.pl" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>
+
+
+
+    # Time::ParseDate gives it the line to parse
+    # we need to return just the date/time info
+    
+    sub parse_log_time {
+      my $line = shift;
+      chomp($line);
+      my $munged;
+
+
+
+
+
+
+
+</pre>
+</body>

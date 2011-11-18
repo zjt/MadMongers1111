@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>009</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "008" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "010" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>
+
+     Other advantages:
+     
+       No need for local::lib, fatpack, PAR
+                   and other workarounds.  
+         * Just install CPAN modules normally.
+     
+       Easily back out to older rev.  
+         * Just change the perl that your app uses.
+     
+       Production deployments are done at off-hours 
+       when you are likely to make a mistake.
+
+
+
+
+
+</pre>
+</body>

@@ -1,0 +1,107 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Fcntl qw(:DEFAULT :flock);
+use Digest::MD5 qw(md5_hex);
+
+my $file = $ARGV[0];
+
+# open the file for reading, 
+# and get the file inode and size
+my ($file_fh, $file_inode, $file_size) = open_file_to_read($file);
+
+# open the offset file for reading and writing
+my $offset_fh = open_offset_file($file);
+
+# read the offset file and seek the position it specifies
+seek_to_position($file_fh, $file_inode, $file_size, $offset_fh);
+
+# print all lines of the file to the file end
+print while ( <$file_fh> );
+
+# save the current position to the offset file, and close filehandles
+save_position_and_close($file_fh, $file_inode, $offset_fh);
+
+sub open_file_to_read {
+    my $file = shift;
+
+    die "specify file\n"         unless $file;
+
+    die "$file does not exist\n" unless -e $file;
+
+    open( my $file_fh, '<', $file) or die $!;
+
+    my ($file_inode, $file_size) = (stat($file))[1,7];
+
+    return ($file_fh, $file_inode, $file_size);
+}
+
+sub open_offset_file {
+    my $file = shift;
+
+    my $offset_file = join('/', '/tmp', md5_hex($file));
+
+    # open the offset file in tmp dir with a determined name
+    sysopen( my $offset_fh, $offset_file, O_RDWR|O_CREAT ) or die $!;
+
+    # grab an exclusive lock so we don't trample on another instance
+    flock( $offset_fh, LOCK_EX ) or die "can't lock! $!";
+
+    return $offset_fh;
+}
+
+sub seek_to_position {
+    my ($file_fh, $file_inode, $file_size, $offset_fh) = @_;
+
+    # parse the info from the offset file
+    my $offset_info = <$offset_fh>; 
+    if ( $offset_info ) {
+        chomp $offset_info;
+
+        # get the last position and the file's inode
+        my ($offset_position, $offset_inode) = split /,/, $offset_info;
+
+        # perform some error checking 
+        # to make sure it's appropriate to seek to position
+        if ( ! defined $offset_position 
+                or 
+            ! defined $offset_inode 
+                or 
+            $offset_position !~ /^\d+$/ 
+                or 
+            $offset_inode !~ /^\d+$/ 
+        ) { 
+            # invalid offset information, starting from beginning
+            $offset_position = 0;
+        }
+        elsif ($offset_inode != $file_inode) {
+            # file is new, starting from beginning
+            $offset_position = 0;
+        } 
+        elsif ( $offset_position > $file_size) {
+            # file was truncated, starting from beginning
+            $offset_position = 0;
+        }
+
+        # skip to the specified position within the file
+        seek($file_fh,$offset_position,0);
+    }
+}
+
+sub save_position_and_close {
+    my ($file_fh, $file_inode, $offset_fh) = @_;
+
+    # get the current position
+    my $new_position = tell($file_fh);
+
+    # overwrite the offset file with the current position
+    seek($offset_fh,0,0);
+    print $offset_fh join(',', $new_position, $file_inode);
+    truncate($offset_fh, tell($offset_fh));
+
+    close $offset_fh; # close will also unlock
+    close $file_fh;
+}
+

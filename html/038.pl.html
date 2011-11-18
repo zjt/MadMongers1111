@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>038.pl</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "037.pl" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "039" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>
+
+      use File::SortedSeek ':all';
+      open BIG, $file or die $!;
+    
+      # find a number or the first number greater 
+      # in a file (ascending order)
+      $tell = numeric( *BIG, $number );
+    
+      # optional argument is a reference 
+      # to a subroutine to munge the file lines 
+      # so that suitable values are extracted 
+      # for comparison to $find
+      $tell = numeric( *BIG, $find, \&amp;munge_line );
+
+
+
+
+</pre>
+</body>
